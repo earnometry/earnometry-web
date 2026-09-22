@@ -35,9 +35,9 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
     <div class="result-head">
       <p class="eyebrow">A starting point for your conversation</p>
       <h2 id="result-title">Suggested estimate</h2>
-      <p class="estimate"><span data-result="estimate">{formatUSD(result.estimate)}</span><span class="currency-label">USD</span></p>
+      <p class="estimate"><span data-result="estimate">{formatUSD(result.rounded.estimate)}</span><span class="currency-label">USD</span></p>
       <p class="range-label">Indicative negotiation range</p>
-      <p class="range" data-result="range">{formatUSD(result.low)} – {formatUSD(result.high)}</p>
+      <p class="range" data-result="range">{formatUSD(result.rounded.low)} – {formatUSD(result.rounded.high)}</p>
       <p class="range-note">80–120% of your estimate</p>
     </div>
     <div class="result-body">
@@ -45,12 +45,12 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
       <div data-breakdown>
         <h3>How it adds up</h3>
         <dl class="breakdown">
-          <div><dt>Base fee <span>Views ÷ 1,000 × CPM</span></dt><dd data-result="baseFee">{formatUSD(result.baseFee)}</dd></div>
-          <div class="integration-row"><dt>After integration <span data-result="integrationLabel">Base fee × 1.00</span></dt><dd data-result="integratedFee">{formatUSD(result.integratedFee)}</dd></div>
-          <div><dt>Usage rights <span data-result="usageLabel">+0% of fee after integration</span></dt><dd data-result="usageFee">+{formatUSD(result.usageFee)}</dd></div>
-          <div><dt>Exclusivity <span data-result="exclusivityLabel">+0% of fee after integration</span></dt><dd data-result="exclusivityFee">+{formatUSD(result.exclusivityFee)}</dd></div>
-          <div><dt>Production cost</dt><dd data-result="production">+{formatUSD(result.production)}</dd></div>
-          <div class="breakdown-total"><dt>Suggested estimate</dt><dd data-result="total">{formatUSD(result.estimate)}</dd></div>
+          <div><dt>Base fee <span>Views ÷ 1,000 × CPM</span></dt><dd data-result="baseFee">{formatUSD(result.rounded.baseFee)}</dd></div>
+          <div class="integration-row"><dt>After integration <span data-result="integrationLabel">Base fee × 1.00</span></dt><dd data-result="integratedFee">{formatUSD(result.rounded.integratedFee)}</dd></div>
+          <div><dt>Usage rights <span data-result="usageLabel">+0% of fee after integration</span></dt><dd data-result="usageFee">+{formatUSD(result.rounded.usageFee)}</dd></div>
+          <div><dt>Exclusivity <span data-result="exclusivityLabel">+0% of fee after integration</span></dt><dd data-result="exclusivityFee">+{formatUSD(result.rounded.exclusivityFee)}</dd></div>
+          <div><dt>Production cost</dt><dd data-result="production">+{formatUSD(result.rounded.production)}</dd></div>
+          <div class="breakdown-total"><dt>Suggested estimate</dt><dd data-result="total">{formatUSD(result.rounded.estimate)}</dd></div>
         </dl>
         <p class="rounding-note">Amounts are rounded to whole dollars for display. Rounded components may not add up exactly.</p>
         <p class="notice" data-zero hidden>With zero views or CPM, only production cost contributes to this estimate.</p>
@@ -105,18 +105,18 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
             usage: select('usage').value as SponsorshipInput['usage'],
             exclusivity: select('exclusivity').value as SponsorshipInput['exclusivity'],
           });
-          setResult('estimate', formatUSD(result.estimate));
-          setResult('total', formatUSD(result.estimate));
-          setResult('range', `${formatUSD(result.low)} – ${formatUSD(result.high)}`);
+          setResult('estimate', formatUSD(result.rounded.estimate));
+          setResult('total', formatUSD(result.rounded.estimate));
+          setResult('range', `${formatUSD(result.rounded.low)} – ${formatUSD(result.rounded.high)}`);
           for (const key of ['baseFee', 'integratedFee', 'usageFee', 'exclusivityFee', 'production'] as const) {
             const prefix = ['usageFee', 'exclusivityFee', 'production'].includes(key) ? '+' : '';
-            setResult(key, `${prefix}${formatUSD(result[key])}`);
+            setResult(key, `${prefix}${formatUSD(result.rounded[key])}`);
           }
           setResult('integrationLabel', `Base fee × ${result.integrationMultiplier.toFixed(2)}`);
           setResult('usageLabel', `+${Math.round(result.usageUplift * 100)}% of fee after integration`);
           setResult('exclusivityLabel', `+${Math.round(result.exclusivityUplift * 100)}% of fee after integration`);
           zero.hidden = result.baseFee !== 0;
-          spokenResult = `Suggested estimate: ${formatUSD(result.estimate)} USD. Indicative range: ${formatUSD(result.low)} to ${formatUSD(result.high)}.`;
+          spokenResult = `Suggested estimate: ${formatUSD(result.rounded.estimate)} USD. Indicative range: ${formatUSD(result.rounded.low)} to ${formatUSD(result.rounded.high)}.`;
         } catch {
           hasError = true;
         }
@@ -136,6 +136,11 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
     form.addEventListener('submit', (event) => event.preventDefault());
     form.addEventListener('input', () => update());
     form.addEventListener('change', () => update());
+    window.addEventListener('pageshow', () => {
+      // History navigation can restore form values after the initial script
+      // runs, without firing input/change. Wait for that restoration to finish.
+      setTimeout(() => update(false), 0);
+    });
     fieldset.disabled = false;
     update(false);
   }

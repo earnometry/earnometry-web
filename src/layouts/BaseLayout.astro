@@ -3,7 +3,9 @@ import '../styles/global.css';
 
 interface Props { title: string; description: string }
 const { title, description } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+// File-format builds expose .html in Astro.url; Pages serves the clean URL.
+const canonicalPath = Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+const canonical = new URL(canonicalPath, Astro.site);
 const isCalculator = Astro.url.pathname.startsWith('/tools/');
 ---
 <!doctype html>

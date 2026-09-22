@@ -44,6 +44,7 @@ The package declares a `wasm32` CPU target, so this one local install needs `--f
 - Astro renders two static HTML pages; TypeScript adds the browser-only calculator.
 - Plain CSS, system fonts, and a local SVG mark keep assets small. No client UI framework.
 - `npm run build` writes the static site to `dist/`, suitable for Cloudflare Pages. Future Pages setup uses that build command and output directory with Node 24. No server adapter is needed. This task does not deploy or configure Cloudflare.
+- The calculator builds as an `.html` file so Cloudflare Pages' extensionless URL matches its links and canonical URL, without a trailing slash.
 - No authentication, database, payments, analytics, cookies, input persistence, ads, or affiliate links.
 - Canonical and Open Graph URLs use the intended `https://earnometry.com` domain configured in `astro.config.mjs`.
 
@@ -67,7 +68,7 @@ estimate = integrated fee × (1 + usage uplift + exclusivity uplift) + productio
 range = estimate × 0.80 to estimate × 1.20
 ```
 
-The two uplifts are additive, never compounded. Production cost is added after the uplifts. Calculations retain full precision until whole-dollar display formatting. Individual rounded components can differ from the rounded total by a dollar.
+The two uplifts are additive, never compounded. Production cost is added after the uplifts. Integer arithmetic retains the fractions from the inputs and multipliers until whole-dollar display rounding, avoiding binary floating-point errors at half-dollar boundaries. Individual rounded components can differ from the rounded total by a dollar.
 
 Defaults are 50,000 views, $25 CPM, integrated segment, no usage rights, no exclusivity, and $0 production. These are example assumptions, not market benchmarks. Estimates and the ±20% range are illustrative, not guaranteed market prices or earnings.
 
@@ -85,4 +86,4 @@ Views must be whole numbers from 0 to 1 billion. CPM accepts $0–$10,000 and pr
 | All zero | 0 views, $0 CPM, $0 production | $0 | $0–$0 |
 | Decimal inputs | 12,345 views, $12.34 CPM, $99.99 production | $252 | $202–$303 |
 
-Unit tests also cover every option combination, zero CPM, input limits, and invalid values. For browser review, check immediate updates, clearing and correcting each field, keyboard focus, methodology expansion, and layouts at 320px, 390px, and desktop widths.
+Unit tests also cover every option combination, zero CPM, input limits, invalid values, and exact half-dollar rounding. For browser review, check immediate updates, clearing and correcting each field, keyboard focus, methodology expansion, and layouts at 320px, 390px, and desktop widths. Navigate home and back after editing inputs to verify that any values restored by the browser still match the result.

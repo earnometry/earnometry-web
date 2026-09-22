@@ -100,3 +100,24 @@ test('unknown option keys are rejected instead of silently using a default', () 
     assert.throws(() => calculateSponsorship({ ...defaultInput, [field]: 'unknown' }), RangeError);
   }
 });
+
+test('half-dollar estimates and ranges round up without binary floating-point drift', () => {
+  const estimateCase = calculateSponsorship({ ...defaultInput, views: 702000, cpm: 3.34, production: 12.48, usage: 'paid' });
+  assert.equal(estimateCase.estimate, 3529.5);
+  assert.equal(formatUSD(estimateCase.rounded.estimate), '$3,530');
+  assert.equal(formatUSD(estimateCase.rounded.low), '$2,824');
+  assert.equal(formatUSD(estimateCase.rounded.high), '$4,235');
+
+  const rangeCase = calculateSponsorship({ views: 385000, cpm: 74.61, production: 788.53, integration: 'dedicated', usage: 'paid', exclusivity: '90-days' });
+  assert.equal(rangeCase.low, 62676.5);
+  assert.equal(formatUSD(rangeCase.rounded.low), '$62,677');
+});
+
+test('large estimates just below, at, and above half a dollar round exactly', () => {
+  // The first exact estimate is $20,222,729,777.49999975. Converting it to a
+  // floating-point Number before rounding would incorrectly round it up.
+  for (const [views, expected] of [[998654321, 20222729777], [998000000, 20209479791], [997345679, 20196229804]]) {
+    const result = calculateSponsorship({ views, cpm: 9999.99, production: 0, integration: 'dedicated', usage: 'organic', exclusivity: '30-days' });
+    assert.equal(result.rounded.estimate, expected);
+  }
+});

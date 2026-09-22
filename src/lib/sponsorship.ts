@@ -66,25 +66,36 @@ export function calculateSponsorship(input: SponsorshipInput) {
   const exclusivity = exclusivityOptions.find((option) => option.value === input.exclusivity);
   if (!integration || !usage || !exclusivity) throw new RangeError('Choose a valid option for every field.');
 
-  const baseFee = (input.views / 1_000) * input.cpm;
-  const integratedFee = baseFee * integration.multiplier;
-  const usageFee = integratedFee * usage.uplift;
-  const exclusivityFee = integratedFee * exclusivity.uplift;
+  // Integer billionths of a dollar preserve every fraction produced by the
+  // allowed inputs and multipliers, including the 80–120% range. Binary floats
+  // can turn an exact $3,529.50 into $3,529.4999999999995 and round it down.
+  const unitsPerDollar = 1_000_000_000n;
+  const centsToUnits = (amount: number) => BigInt(Math.round(amount * 100)) * 10_000_000n;
+  const percentage = (rate: number) => BigInt(Math.round(rate * 100));
+  const baseFee = BigInt(input.views) * centsToUnits(input.cpm) / 1_000n;
+  const integratedFee = baseFee * percentage(integration.multiplier) / 100n;
+  const usageFee = integratedFee * percentage(usage.uplift) / 100n;
+  const exclusivityFee = integratedFee * percentage(exclusivity.uplift) / 100n;
+  const production = centsToUnits(input.production);
   // Both uplifts apply to the integrated fee; they are not compounded.
-  const estimate = integratedFee + usageFee + exclusivityFee + input.production;
+  const estimate = integratedFee + usageFee + exclusivityFee + production;
+  const amounts = {
+    baseFee, integratedFee, usageFee, exclusivityFee, production, estimate,
+    low: estimate * 80n / 100n,
+    high: estimate * 120n / 100n,
+  };
+  const mapAmounts = (convert: (amount: bigint) => number) => Object.fromEntries(
+    Object.entries(amounts).map(([key, amount]) => [key, convert(amount)]),
+  ) as Record<keyof typeof amounts, number>;
 
   return {
-    baseFee,
-    integratedFee,
+    ...mapAmounts((amount) => Number(amount / unitsPerDollar) + Number(amount % unitsPerDollar) / Number(unitsPerDollar)),
+    // Round the exact values before conversion to Number. Even values just
+    // below a half dollar must stay on the correct side at the upper limits.
+    rounded: mapAmounts((amount) => Number((amount + unitsPerDollar / 2n) / unitsPerDollar)),
     integrationMultiplier: integration.multiplier,
-    usageFee,
     usageUplift: usage.uplift,
-    exclusivityFee,
     exclusivityUplift: exclusivity.uplift,
-    production: input.production,
-    estimate,
-    low: estimate * 0.8,
-    high: estimate * 1.2,
   };
 }
 
