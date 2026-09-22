@@ -6,7 +6,7 @@ const { title, description, noindex = false } = Astro.props;
 // File-format builds expose .html in Astro.url; Pages serves the clean URL.
 const canonicalPath = Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
 const canonical = new URL(canonicalPath, Astro.site);
-const isCalculator = Astro.url.pathname.startsWith('/tools/');
+const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
 ---
 <!doctype html>
 <html lang="en">

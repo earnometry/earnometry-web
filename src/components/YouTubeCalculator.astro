@@ -1,0 +1,184 @@
+---
+import NumberField from './NumberField.astro';
+import { youtubeRules } from '../lib/youtube';
+import '../styles/youtube.css';
+---
+
+<div class="calculator-grid youtube-calculator" data-youtube-calculator>
+  <form class="calculator-form" novalidate aria-labelledby="youtube-inputs-title" aria-describedby="youtube-guidance">
+    <div class="panel-heading"><h2 id="youtube-inputs-title">Your views and RPM</h2><span class="unit-label">USD</span></div>
+    <p id="youtube-guidance" class="panel-description">Enter your own assumptions. Results update as you type. Use 0 long-form views for a Shorts-only scenario; leave optional Shorts views blank if none.</p>
+    <noscript><p class="notice">Enable JavaScript to use this calculator. The formulas and hypothetical examples below remain available; no live estimate is shown.</p></noscript>
+    <fieldset data-controls disabled>
+      <legend class="sr-only">YouTube revenue inputs</legend>
+      <NumberField name="longViews" label="Monthly long-form views" max={youtubeRules.views.max} required
+        hint="Whole views, from 0 to 1 billion. Use the same time period and view definition as your RPM. Enter 0 for Shorts only." />
+      <NumberField name="longRpm" label="Long-form RPM (USD per 1,000 views)" max={youtubeRules.rpm.max} step="0.0001" currency
+        hint="Your creator revenue per 1,000 views, after platform revenue sharing. Required for positive long-form views. $0–$10,000; up to 4 decimal places." />
+      <NumberField name="shortsViews" label="Monthly Shorts views (optional)" max={youtubeRules.views.max}
+        hint="Blank means 0. Whole views, up to 1 billion. With YouTube Studio’s Shorts RPM, use the corresponding engaged views, not a public view counter with a different definition." />
+      <NumberField name="shortsRpm" label="Shorts RPM (USD per 1,000 views)" max={youtubeRules.rpm.max} step="0.0001" currency
+        hint="Required for positive Shorts views. Use an RPM that matches your Shorts view count. $0–$10,000; up to 4 decimal places. Zero is allowed." />
+
+      <details class="youtube-planning">
+        <summary>Optional planning range</summary>
+        <p class="field-hint">Enter a low/high pair for either active format. Each pair must include its central RPM. Leave a pair blank to hold that format at its central RPM. Inputs activate when its monthly views are positive.</p>
+        <fieldset class="youtube-input-group">
+          <legend>Long-form RPM range</legend>
+          <NumberField name="longLow" label="Low long-form RPM (USD)" max={youtubeRules.rpm.max} step="0.0001" currency disabled
+            hint="$0 up to your central long-form RPM; up to 4 decimal places." />
+          <NumberField name="longHigh" label="High long-form RPM (USD)" max={youtubeRules.rpm.max} step="0.0001" currency disabled
+            hint="Your central long-form RPM up to $10,000; up to 4 decimal places." />
+        </fieldset>
+        <fieldset class="youtube-input-group">
+          <legend>Shorts RPM range</legend>
+          <NumberField name="shortsLow" label="Low Shorts RPM (USD)" max={youtubeRules.rpm.max} step="0.0001" currency disabled
+            hint="$0 up to your central Shorts RPM; up to 4 decimal places." />
+          <NumberField name="shortsHigh" label="High Shorts RPM (USD)" max={youtubeRules.rpm.max} step="0.0001" currency disabled
+            hint="Your central Shorts RPM up to $10,000; up to 4 decimal places." />
+        </fieldset>
+      </details>
+
+      <fieldset class="youtube-input-group">
+        <legend>Your monthly income target</legend>
+        <NumberField name="target" label="Monthly income target (USD)" max={youtubeRules.target.max} step="0.01" currency
+          hint="Optional. $0–$1,000,000; up to 2 decimal places. See the total views needed using each central RPM, independently of your current views." />
+      </fieldset>
+    </fieldset>
+    <p class="local-note">Your inputs stay in this page. They are not sent or saved. Limits are technical guardrails, not market benchmarks.</p>
+  </form>
+
+  <section class="result-panel" aria-labelledby="youtube-result-title">
+    <div class="result-head">
+      <p class="eyebrow">Your assumptions, made clear</p>
+      <h2 id="youtube-result-title">Estimated monthly revenue</h2>
+      <p class="estimate"><span data-result="monthly">—</span><span class="currency-label">USD</span></p>
+      <p class="range-note" data-revenue-state>Enter monthly long-form views and the RPM for each format with positive views.</p>
+    </div>
+    <div class="result-body">
+      <h3>Daily and annual estimates</h3>
+      <dl class="breakdown">
+        <div><dt>Average daily revenue<span>Monthly × 12 ÷ 365</span></dt><dd data-result="daily">—</dd></div>
+        <div><dt>Estimated annual revenue<span>Monthly × 12</span></dt><dd data-result="annual">—</dd></div>
+      </dl>
+      <p class="rounding-note">A normalized daily average and a year of unchanged monthly performance, not a forecast of growth or seasonality.</p>
+
+      <h3>Monthly revenue by format</h3>
+      <dl class="breakdown">
+        <div><dt>Long-form<span>Monthly views ÷ 1,000 × RPM</span></dt><dd data-result="longForm">—</dd></div>
+        <div><dt>Shorts<span>Matching monthly views ÷ 1,000 × RPM</span></dt><dd data-result="shorts">—</dd></div>
+      </dl>
+      <p class="rounding-note">Amounts round to cents; rounded components may differ from the total by a cent. A positive value that rounds to zero appears as &lt;$0.01.</p>
+
+      <h3>Monthly planning range</h3>
+      <p class="range" data-result="planningRange">—</p>
+      <p class="field-hint" data-range-state>Add low and high RPM assumptions for at least one active format to see a range.</p>
+      <p class="rounding-note">Views stay fixed. This is a range of your assumptions, not a confidence interval, market benchmark, or guaranteed minimum or maximum.</p>
+
+      <h3>Views needed for your monthly target</h3>
+      <p class="field-hint">Two alternatives for the full target. These are total monthly views, not additional views. Do not add the alternatives together.</p>
+      <dl class="youtube-targets">
+        <div><dt>Long-form only</dt><dd data-target="long">Enter a monthly income target.</dd></div>
+        <div><dt>Shorts only</dt><dd data-target="shorts">Enter a monthly income target.</dd></div>
+      </dl>
+
+      <p class="result-disclaimer">Estimates use your views and RPM assumptions. Actual revenue varies and is not guaranteed. Daily and annual figures assume the same monthly performance. Results are before your taxes and expenses and do not establish monetization eligibility.</p>
+      <a class="text-link" href="#methodology">Understand the methodology <span aria-hidden="true">↓</span></a>
+    </div>
+  </section>
+  <p class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-announcement></p>
+</div>
+
+<script>
+  import { evaluateYouTube, formatRevenue, formatRpm, formatViews, youtubeFields, youtubeRules, type YouTubeField, type YouTubeInput } from '../lib/youtube';
+
+  const root = document.querySelector<HTMLElement>('[data-youtube-calculator]');
+  if (root) {
+    const form = root.querySelector<HTMLFormElement>('form')!;
+    const controls = form.querySelector<HTMLFieldSetElement>('[data-controls]')!;
+    const announcement = root.querySelector<HTMLElement>('[data-announcement]')!;
+    const touched = new Set<YouTubeField>();
+    const names = Object.keys(youtubeFields) as YouTubeField[];
+    const input = (name: YouTubeField) => form.elements.namedItem(name) as HTMLInputElement;
+    let timer: ReturnType<typeof setTimeout>;
+    let lastAnnouncement = '';
+
+    function setText(selector: string, text: string) {
+      root!.querySelector<HTMLElement>(selector)!.textContent = text;
+    }
+
+    function update(announce = true) {
+      // Browsers expose an empty value for malformed numeric text (for example
+      // a partial exponent). Preserve badInput as invalid, even for optional fields.
+      const raw = Object.fromEntries(names.map((name) => [name, input(name).validity.badInput ? 'invalid' : input(name).value])) as YouTubeInput;
+      const state = evaluateYouTube(raw);
+      input('longRpm').required = state.active.long;
+      input('shortsRpm').required = state.active.shorts;
+      for (const name of ['longLow', 'longHigh'] as const) input(name).disabled = !state.active.long;
+      for (const name of ['shortsLow', 'shortsHigh'] as const) input(name).disabled = !state.active.shorts;
+
+      const shownErrors: string[] = [];
+      for (const name of names) {
+        const error = touched.has(name) ? state.errors[name] : undefined;
+        input(name).setAttribute('aria-invalid', String(Boolean(error)));
+        const message = root!.querySelector<HTMLElement>(`#${name}-error`)!;
+        message.textContent = error ?? '';
+        message.hidden = !error;
+        if (error) shownErrors.push(`${youtubeFields[name].label}: ${error}`);
+      }
+      for (const name of ['monthly', 'daily', 'annual', 'longForm', 'shorts'] as const) {
+        setText(`[data-result="${name}"]`, state.revenue ? formatRevenue(state.revenue[name]) : '—');
+      }
+      root!.querySelector('[data-result="monthly"]')!.classList.toggle('compact-value', Boolean(state.revenue && formatRevenue(state.revenue.monthly).length > 15));
+      setText('[data-revenue-state]', state.revenue ? 'Based on your entered views and RPMs.' : 'Enter valid monthly long-form views and the RPM for each format with positive views.');
+      setText('[data-result="planningRange"]', state.range ? `${formatRevenue(state.range.low)} – ${formatRevenue(state.range.high)}` : '—');
+      const rangeAssumptions = state.range ? (['long', 'shorts'] as const).flatMap((format) => {
+        const bounds = state.range![format];
+        return bounds ? [`${format === 'long' ? 'Long-form' : 'Shorts'} RPM: ${formatRpm(bounds.low)} to ${formatRpm(bounds.high)}.`] : [];
+      }).join(' ') : state.rangeMessage;
+      setText('[data-range-state]', rangeAssumptions);
+      for (const format of ['long', 'shorts'] as const) {
+        const result = state.targets[format];
+        const text = result.status === 'ready'
+          ? `${formatViews(result.views)} monthly views${result.views > BigInt(youtubeRules.views.max) ? ' (exceeds the calculator’s 1 billion views input limit)' : ''}`
+          : result.message;
+        setText(`[data-target="${format}"]`, text);
+      }
+
+      if (announce) {
+        clearTimeout(timer);
+        // One debounced summary, rather than a live region for every figure.
+        const focusName = (document.activeElement as HTMLInputElement | null)?.name;
+        const isTarget = focusName === 'target';
+        const isRange = ['longLow', 'longHigh', 'shortsLow', 'shortsHigh'].includes(focusName ?? '');
+        const summary = isTarget
+          ? `Views needed. Long-form only: ${root!.querySelector('[data-target="long"]')!.textContent} Shorts only: ${root!.querySelector('[data-target="shorts"]')!.textContent}`
+          : isRange ? `Monthly planning range: ${state.range ? `${formatRevenue(state.range.low)} to ${formatRevenue(state.range.high)}.` : state.rangeMessage}`
+          : state.revenue ? `Estimated monthly revenue: ${formatRevenue(state.revenue.monthly)} USD.` : 'Revenue estimate unavailable. Enter valid monthly views and RPMs.';
+        const spoken = [summary, ...shownErrors].join(' ');
+        timer = setTimeout(() => {
+          if (spoken !== lastAnnouncement) announcement.textContent = spoken;
+          lastAnnouncement = spoken;
+        }, 500);
+      }
+    }
+
+    function onEdit(event: Event) {
+      const control = event.target;
+      if (control instanceof HTMLInputElement && names.includes(control.name as YouTubeField)) {
+        touched.add(control.name as YouTubeField);
+        update();
+      }
+    }
+    form.addEventListener('submit', (event) => event.preventDefault());
+    form.addEventListener('input', onEdit);
+    form.addEventListener('change', onEdit);
+    form.addEventListener('focusout', onEdit);
+    window.addEventListener('pageshow', () => {
+      // Back/forward navigation can restore values after the script runs.
+      setTimeout(() => update(false), 0);
+    });
+    controls.disabled = false;
+    update(false);
+  }
+</script>

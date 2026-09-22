@@ -1,7 +1,7 @@
 ---
 import NumberField from './NumberField.astro';
 import SelectField from './SelectField.astro';
-import { calculateSponsorship, defaultInput, formatUSD, integrationOptions, usageOptions, exclusivityOptions } from '../lib/sponsorship';
+import { calculateSponsorship, defaultInput, formatUSD, integrationOptions, usageOptions, exclusivityOptions, numericRules } from '../lib/sponsorship';
 const result = calculateSponsorship(defaultInput);
 const percent = (value: number) => `${Math.round(value * 100)}%`;
 ---
@@ -12,9 +12,9 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
     <noscript><p class="notice">Enable JavaScript to change inputs and calculate your estimate. The result below shows only the prefilled example.</p></noscript>
     <fieldset disabled>
       <legend class="sr-only">Sponsorship inputs</legend>
-      <NumberField name="views" label="Average views per sponsored video" value={defaultInput.views}
+      <NumberField name="views" label="Average views per sponsored video" value={defaultInput.views} max={numericRules.views.max} required
         hint="Use a realistic average from comparable videos, not your follower count. Whole views, from 0 to 1 billion." />
-      <NumberField name="cpm" label="Base sponsorship CPM (USD)" value={defaultInput.cpm} currency
+      <NumberField name="cpm" label="Base sponsorship CPM (USD)" value={defaultInput.cpm} max={numericRules.cpm.max} step="0.01" required currency
         hint="Your assumed price per 1,000 views. This is your assumption, not a market benchmark. Adjust for niche, audience, geography, and demand. From $0 to $10,000." />
       <SelectField name="integration" label="Integration type" value={defaultInput.integration}
         hint={integrationOptions.map((option) => `${option.label}: ×${option.multiplier.toFixed(2)}`).join('; ') + '.'}
@@ -25,7 +25,7 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
       <SelectField name="exclusivity" label="Exclusivity" value={defaultInput.exclusivity}
         hint={`Time you agree not to work with competing brands. ${exclusivityOptions.slice(1).map((option) => `${option.label}: +${percent(option.uplift)}`).join('; ')}. Applied to the fee after integration.`}
         options={exclusivityOptions} />
-      <NumberField name="production" label="Additional production cost (USD)" value={defaultInput.production} currency
+      <NumberField name="production" label="Additional production cost (USD)" value={defaultInput.production} max={numericRules.production.max} step="0.01" required currency
         hint="Add special filming, editing, travel, props, or other deal-specific costs. From $0 to $1,000,000; enter 0 if none." />
     </fieldset>
     <p class="local-note">Your inputs stay in this page. They are not sent or saved.</p>

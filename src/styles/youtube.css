@@ -1,0 +1,19 @@
+.youtube-input-group { margin-top: 26px; }
+.youtube-input-group legend { color: var(--green); font-weight: 600; margin-bottom: 16px; }
+.youtube-planning { margin-top: 28px; padding-bottom: 16px; }
+.youtube-planning:not([open]) { padding-bottom: 0; }
+.youtube-calculator .result-body h3:not(:first-child) { margin-top: 28px; }
+.youtube-calculator .breakdown dd { flex-shrink: 0; max-width: 55%; }
+.youtube-calculator .estimate .compact-value { font-size: clamp(1.5rem, 3vw, 2.4rem); }
+.youtube-targets { margin: 18px 0 0; font-size: 0.85rem; }
+.youtube-targets > div { border-top: 1px solid #cbd5c3; padding-block: 14px; }
+.youtube-targets dt { color: var(--green); font-weight: 600; }
+.youtube-targets dd { margin: 5px 0 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.youtube-examples { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-block: 20px; table-layout: fixed; }
+.youtube-examples caption { text-align: left; color: var(--muted); margin-bottom: 12px; }
+.youtube-examples th, .youtube-examples td { border-bottom: 1px solid var(--line); padding: 12px 8px; text-align: left; overflow-wrap: anywhere; }
+.youtube-examples th { color: var(--green); font-weight: 600; }
+.youtube-examples th:first-child { width: 28%; }
+@media (max-width: 380px) {
+  .youtube-examples th, .youtube-examples td { padding-inline: 4px; }
+}
