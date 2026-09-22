@@ -1,22 +1,23 @@
 ---
-import { numericRules, type NumericField } from '../lib/sponsorship';
-
 interface Props {
-  name: NumericField;
+  name: string;
   label: string;
   hint: string;
-  value: number;
+  value?: number;
+  max: number;
+  step?: string;
+  required?: boolean;
+  disabled?: boolean;
   currency?: boolean;
 }
-const { name, label, hint, value, currency = false } = Astro.props;
-const rule = numericRules[name];
+const { name, label, hint, value, max, step = '1', required = false, disabled = false, currency = false } = Astro.props;
 ---
 <div class="field">
   <label for={name}>{label}</label>
   <div class:list={['input-wrap', { 'has-prefix': currency }]}>
     {currency && <span class="input-prefix" aria-hidden="true">$</span>}
-    <input id={name} name={name} type="number" inputmode={rule.whole ? 'numeric' : 'decimal'}
-      min="0" max={rule.max} step={rule.whole ? '1' : '0.01'} value={value} required
+    <input id={name} name={name} type="number" inputmode={step === '1' ? 'numeric' : 'decimal'}
+      min="0" max={max} step={step} value={value} required={required} disabled={disabled}
       aria-describedby={`${name}-hint ${name}-error`} />
   </div>
   <p class="field-hint" id={`${name}-hint`}>{hint}</p>

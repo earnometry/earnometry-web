@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import YouTubeCalculator from '../../components/YouTubeCalculator.astro';
+---
+
+<BaseLayout
+  title="YouTube Money Calculator: Estimate Earnings | Earnometry"
+  description="Estimate YouTube earnings from your long-form and Shorts views and RPM assumptions. See monthly revenue, planning ranges, and views needed for your income goal."
+>
+  <div class="calculator-intro">
+    <a class="back-link" href="/"><span aria-hidden="true">←</span> All tools</a>
+    <p class="eyebrow">Free tool · For creators</p>
+    <h1>YouTube Money Calculator</h1>
+    <p class="lead">Estimate YouTube revenue from your monthly long-form and Shorts views. Bring your own RPM assumptions and see how the numbers add up.</p>
+    <p class="intro-note">A transparent planning estimate, not a universal YouTube payout rate or guaranteed earnings.</p>
+  </div>
+
+  <YouTubeCalculator />
+
+  <section class="methodology" id="methodology" aria-labelledby="youtube-methodology-title">
+    <div><p class="eyebrow">Behind the numbers</p><h2 id="youtube-methodology-title">Your revenue estimate,<br />with every assumption in view.</h2></div>
+    <div class="methodology-copy">
+      <h3>RPM vs CPM: which number belongs here?</h3>
+      <p>RPM is creator revenue per 1,000 views on the relevant measurement basis, after platform revenue sharing. Depending on the analytics metric, it can cover more than advertising revenue. CPM is what advertisers pay per 1,000 ad impressions, before revenue sharing; it is not your RPM.</p>
+      <p>Use a matching historical RPM or your own explicitly hypothetical assumption. This calculator does not convert CPM into RPM or subtract a platform share again. See <a href="https://support.google.com/youtube/answer/9314357?hl=en">YouTube’s explanation of RPM and CPM</a>.</p>
+
+      <h3>Keep views and RPM on the same basis</h3>
+      <p>Use the same format, period, revenue scope, and view definition for each pair of inputs. For YouTube Studio’s Shorts RPM, use the corresponding engaged views. A public Shorts view counter can measure something different. Do not apply a channel-wide revenue total independently to both formats.</p>
+      <p>A positive assumption is only a planning scenario if you are not earning monetization revenue. These results do not determine YouTube Partner Program eligibility. Only revenue represented by your entered RPM is included; no sponsorship fees, merchandise revenue, or other business income is added separately.</p>
+
+      <details>
+        <summary>See every formula and calculation assumption</summary>
+        <div class="details-content">
+          <ol>
+            <li><strong>Long-form monthly revenue</strong> = monthly long-form views ÷ 1,000 × long-form RPM.</li>
+            <li><strong>Shorts monthly revenue</strong> = matching monthly Shorts views ÷ 1,000 × Shorts RPM.</li>
+            <li><strong>Estimated monthly revenue</strong> = long-form revenue + Shorts revenue. RPMs are not averaged.</li>
+            <li><strong>Estimated annual revenue</strong> = monthly revenue × 12. <strong>Average daily revenue</strong> = annual revenue ÷ 365. Both assume unchanged monthly performance; the daily result is not a prediction for a specific calendar day.</li>
+            <li><strong>Low monthly revenue</strong> = long-form views ÷ 1,000 × low long-form RPM + Shorts views ÷ 1,000 × low Shorts RPM. The high result uses the corresponding high RPMs. If a pair is blank, that format stays at its central RPM; an inactive format contributes zero.</li>
+            <li><strong>Long-form-only views needed</strong> = monthly income target × 1,000 ÷ long-form RPM, rounded up. The Shorts-only alternative uses Shorts RPM. Each alternative covers the full target on its own; they are not additional views or a mixed-format strategy.</li>
+          </ol>
+          <p>Zero views or a zero RPM contribute no revenue. A positive target cannot be reached at zero RPM; a zero target needs zero views. Planning ranges hold views fixed and use only your supplied RPM bounds. They are not confidence intervals or guaranteed limits.</p>
+          <p>Calculations keep decimal precision until display. Revenue rounds half up to cents, and a positive amount that rounds to zero appears as &lt;$0.01. Required views always round upward. Independently rounded components can differ from the monthly total by a cent.</p>
+          <p>Technical guardrails allow up to 1 billion whole views per format, $10,000 RPM with four decimal places, and a $1,000,000 monthly target with two decimal places. These limits are not market benchmarks. A required-view result may exceed the views input limit and is shown without capping it.</p>
+        </div>
+      </details>
+
+      <h3>How much could 10K, 100K, or 1M views earn?</h3>
+      <p>There is no universal amount YouTube pays for a view count. These separate hypothetical examples use an assumed $3.00 long-form RPM and $0.05 Shorts RPM. They are not market benchmarks or a combined scenario.</p>
+      <table class="youtube-examples">
+        <caption>Illustrative monthly revenue using matching views and RPM assumptions.</caption>
+        <thead><tr><th scope="col">Monthly views</th><th scope="col">Long-form at $3.00 RPM</th><th scope="col">Shorts at $0.05 RPM</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">10,000</th><td>$30.00</td><td>$0.50</td></tr>
+          <tr><th scope="row">100,000</th><td>$300.00</td><td>$5.00</td></tr>
+          <tr><th scope="row">1,000,000</th><td>$3,000.00</td><td>$50.00</td></tr>
+        </tbody>
+      </table>
+      <p>For example, 100,000 ÷ 1,000 × $3.00 = <strong>$300.00</strong> in estimated monthly revenue. The answer changes when your RPM assumption changes.</p>
+
+      <h3>Why YouTube earnings vary</h3>
+      <p>Audience, niche, geography, season, format, and monetization all matter. A historical RPM is a useful assumption, not a promise that future performance will match it. Revenue is before your own taxes and expenses, so it is not profit or a guaranteed payment.</p>
+      <h3>Planning a separate brand deal?</h3>
+      <p>Use the <a href="/tools/sponsorship-rate-calculator">Creator Sponsorship Rate Calculator</a> to estimate a fee for a sponsored video or integration. Keep that fee separate from your YouTube revenue assumptions and avoid counting the same income twice.</p>
+    </div>
+  </section>
+</BaseLayout>
