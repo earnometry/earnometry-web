@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SponsorshipCalculator from '../../components/SponsorshipCalculator.astro';
+---
+<BaseLayout title="Creator Sponsorship Rate Calculator | Earnometry" description="Estimate a creator sponsorship fee from views, your assumed CPM, integration type, usage rights, exclusivity, and production costs. See the full calculation.">
+  <div class="calculator-intro">
+    <a class="back-link" href="/"><span aria-hidden="true">←</span> All tools</a>
+    <p class="eyebrow">Free tool · For creators</p>
+    <h1>Creator Sponsorship<br class="desktop-break" /> Rate Calculator</h1>
+    <p class="lead">Put a number behind your next brand conversation. Estimate a fee for a sponsored video or integration, with every assumption in view.</p>
+    <p class="intro-note">An estimate to help you prepare, not a guaranteed market rate.</p>
+  </div>
+
+  <SponsorshipCalculator />
+
+  <section class="methodology" id="methodology" aria-labelledby="methodology-title">
+    <div><p class="eyebrow">Behind the numbers</p><h2 id="methodology-title">A transparent estimate.<br />A more informed conversation.</h2></div>
+    <div class="methodology-copy">
+      <p>This tool starts with your average views and an assumed sponsorship CPM: the price for every 1,000 views. It then adjusts for the video format and deal terms you select.</p>
+      <p>The default CPM and fixed multipliers are modeling assumptions, not measured market rates. Choose a CPM that reflects your niche, audience, geography, and demand.</p>
+      <details>
+        <summary>See the formula and calculation method</summary>
+        <div class="details-content">
+          <ol>
+            <li><strong>Base fee</strong> = average views ÷ 1,000 × base CPM.</li>
+            <li><strong>Fee after integration</strong> = base fee × integration multiplier: 0.60 for a short mention, 1.00 for an integrated segment, or 1.50 for a dedicated video.</li>
+            <li><strong>Usage rights</strong> = fee after integration × 0%, 20%, or 50% for none, organic brand reuse, or paid advertising usage.</li>
+            <li><strong>Exclusivity</strong> = fee after integration × 0%, 15%, or 30% for none, 30 days, or 90 days.</li>
+            <li><strong>Suggested estimate</strong> = fee after integration + usage rights + exclusivity + production cost.</li>
+            <li><strong>Indicative range</strong> = estimate × 0.80 to estimate × 1.20.</li>
+          </ol>
+          <p>Usage and exclusivity percentages are added together, not compounded. Production costs are added afterward. The range is a simple ±20% illustration, not a statistically derived confidence interval. Calculations use unrounded values; displayed dollar amounts are rounded.</p>
+          <h3>A worked example</h3>
+          <p>50,000 views at a $25 CPM gives a $1,250 base fee. An integrated segment keeps that at $1,250. Organic reuse (+20%) and 30-day exclusivity (+15%) add $437.50. Add $100 production cost for an unrounded estimate of $1,787.50.</p>
+          <p><strong>Displayed estimate: $1,788. Indicative range: $1,430–$2,145.</strong></p>
+          <p>Input limits keep the calculator usable: up to 1 billion whole views, $10,000 CPM, and $1,000,000 production cost. These are technical guardrails, not market benchmarks. Money inputs accept up to two decimal places.</p>
+        </div>
+      </details>
+      <h3>Use the number as a starting point</h3>
+      <p>Actual rates vary. Consider the specific deliverables, audience fit, rights, and restrictions in your deal. This simplified model cannot capture every term; negotiation matters.</p>
+    </div>
+  </section>
+</BaseLayout>
