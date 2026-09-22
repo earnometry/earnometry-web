@@ -15,7 +15,7 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
       <NumberField name="views" label="Average views per sponsored video" value={defaultInput.views}
         hint="Use a realistic average from comparable videos, not your follower count. Whole views, from 0 to 1 billion." />
       <NumberField name="cpm" label="Base sponsorship CPM (USD)" value={defaultInput.cpm} currency
-        hint="Your assumed price per 1,000 views. $25 is an example, not a benchmark. Adjust for niche, audience, geography, and demand. From $0 to $10,000." />
+        hint="Your assumed price per 1,000 views. This is your assumption, not a market benchmark. Adjust for niche, audience, geography, and demand. From $0 to $10,000." />
       <SelectField name="integration" label="Integration type" value={defaultInput.integration}
         hint={integrationOptions.map((option) => `${option.label}: ×${option.multiplier.toFixed(2)}`).join('; ') + '.'}
         options={integrationOptions} />
