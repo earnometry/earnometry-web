@@ -7,7 +7,6 @@ A small, static website with a home page and Creator Sponsorship Rate Calculator
 Install Node.js 24 LTS (which includes npm), then run from the repository root:
 
 ```sh
-git switch codex/mvp-01
 npm install
 npm run dev
 ```
@@ -16,7 +15,7 @@ Open http://localhost:4321. The calculator is at http://localhost:4321/tools/spo
 
 When Astro starts a background server (for example, inside an agent environment), use `npm run dev -- stop` or `npm run preview -- stop` to stop it. The corresponding `-- status` command shows its URL and running state.
 
-For an existing checkout that has not fetched the implementation branch, run `git fetch origin` before switching branches. On a clean checkout, `npm ci` can replace `npm install` for a lockfile-exact installation.
+On a clean checkout, `npm ci` can replace `npm install` for a lockfile-exact installation.
 
 ## Check and build
 
@@ -41,16 +40,20 @@ The package declares a `wasm32` CPU target, so this one local install needs `--f
 
 ## Architecture and deployment target
 
-- Astro renders two static HTML pages; TypeScript adds the browser-only calculator.
+- Astro renders the home page, calculator, and a custom 404 as static HTML; TypeScript adds the browser-only calculator.
 - Plain CSS, system fonts, and a local SVG mark keep assets small. No client UI framework.
 - `npm run build` writes the static site to `dist/`, suitable for Cloudflare Pages. Future Pages setup uses that build command and output directory with Node 24. No server adapter is needed. This task does not deploy or configure Cloudflare.
 - The calculator builds as an `.html` file so Cloudflare Pages' extensionless URL matches its links and canonical URL, without a trailing slash.
 - No authentication, database, payments, analytics, cookies, input persistence, ads, or affiliate links.
 - Canonical and Open Graph URLs use the intended `https://earnometry.com` domain configured in `astro.config.mjs`.
+- The official `@astrojs/sitemap` integration generates `dist/sitemap-index.xml` and `dist/sitemap-0.xml`. `public/robots.txt` allows crawlers and points to the sitemap index; Astro copies it to `dist/robots.txt`.
+- The top-level `dist/404.html` lets Cloudflare Pages serve missing URLs as 404 responses instead of falling back to the homepage. The error page is marked `noindex` and excluded from the sitemap.
 
 ## Main files
 
 - `src/pages/index.astro`: home page.
+- `src/pages/404.astro`: custom not-found page using the shared layout.
+- `public/robots.txt`: crawler access and sitemap discovery.
 - `src/pages/tools/sponsorship-rate-calculator.astro`: calculator page and methodology.
 - `src/components/SponsorshipCalculator.astro`: instant updates, error feedback, and result breakdown.
 - `src/components/NumberField.astro` and `SelectField.astro`: reusable labeled fields.
