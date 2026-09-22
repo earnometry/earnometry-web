@@ -1,0 +1,45 @@
+---
+import '../styles/global.css';
+
+interface Props { title: string; description: string }
+const { title, description } = Astro.props;
+// File-format builds expose .html in Astro.url; Pages serves the clean URL.
+const canonicalPath = Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+const canonical = new URL(canonicalPath, Astro.site);
+const isCalculator = Astro.url.pathname.startsWith('/tools/');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Earnometry" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="theme-color" content="#163e32" />
+    <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header shell">
+      <a class="brand" href="/" aria-label="Earnometry home">
+        <svg class="brand-mark" width="32" height="32" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="currentColor"/><path d="M15 13h20v5H21v4h11v5H21v4h14v5H15z" fill="#f8f6ef"/></svg>
+        Earnometry<span class="brand-dot" aria-hidden="true">.</span>
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="/tools/sponsorship-rate-calculator" aria-current={isCalculator ? 'page' : undefined}>Sponsorship calculator</a>
+      </nav>
+    </header>
+    <main id="main" class="shell" tabindex="-1"><slot /></main>
+    <footer class="site-footer shell">
+      <div class="footer-top"><a class="footer-brand" href="/">Earnometry</a><span>Make sense of the numbers.</span></div>
+      <p>Earnometry provides estimates for educational and informational purposes only. Results are not financial, legal, tax, or professional advice.</p>
+    </footer>
+  </body>
+</html>

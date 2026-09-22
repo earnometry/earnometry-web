@@ -1,0 +1,147 @@
+---
+import NumberField from './NumberField.astro';
+import SelectField from './SelectField.astro';
+import { calculateSponsorship, defaultInput, formatUSD, integrationOptions, usageOptions, exclusivityOptions } from '../lib/sponsorship';
+const result = calculateSponsorship(defaultInput);
+const percent = (value: number) => `${Math.round(value * 100)}%`;
+---
+<div class="calculator-grid" data-calculator>
+  <form class="calculator-form" novalidate aria-labelledby="inputs-title" aria-describedby="input-guidance">
+    <div class="panel-heading"><h2 id="inputs-title">Your sponsorship details</h2><span class="unit-label">USD</span></div>
+    <p id="input-guidance" class="panel-description">Adjust the example values to update your estimate instantly. All fields are required; zero is allowed.</p>
+    <noscript><p class="notice">Enable JavaScript to change inputs and calculate your estimate. The result below shows only the prefilled example.</p></noscript>
+    <fieldset disabled>
+      <legend class="sr-only">Sponsorship inputs</legend>
+      <NumberField name="views" label="Average views per sponsored video" value={defaultInput.views}
+        hint="Use a realistic average from comparable videos, not your follower count. Whole views, from 0 to 1 billion." />
+      <NumberField name="cpm" label="Base sponsorship CPM (USD)" value={defaultInput.cpm} currency
+        hint="Your assumed price per 1,000 views. This is your assumption, not a market benchmark. Adjust for niche, audience, geography, and demand. From $0 to $10,000." />
+      <SelectField name="integration" label="Integration type" value={defaultInput.integration}
+        hint={integrationOptions.map((option) => `${option.label}: ×${option.multiplier.toFixed(2)}`).join('; ') + '.'}
+        options={integrationOptions} />
+      <SelectField name="usage" label="Usage rights" value={defaultInput.usage}
+        hint={`How the brand may reuse your content. ${usageOptions.slice(1).map((option) => `${option.label}: +${percent(option.uplift)}`).join('; ')}. Applied to the fee after integration.`}
+        options={usageOptions} />
+      <SelectField name="exclusivity" label="Exclusivity" value={defaultInput.exclusivity}
+        hint={`Time you agree not to work with competing brands. ${exclusivityOptions.slice(1).map((option) => `${option.label}: +${percent(option.uplift)}`).join('; ')}. Applied to the fee after integration.`}
+        options={exclusivityOptions} />
+      <NumberField name="production" label="Additional production cost (USD)" value={defaultInput.production} currency
+        hint="Add special filming, editing, travel, props, or other deal-specific costs. From $0 to $1,000,000; enter 0 if none." />
+    </fieldset>
+    <p class="local-note">Your inputs stay in this page. They are not sent or saved.</p>
+  </form>
+
+  <section class="result-panel" aria-labelledby="result-title">
+    <div class="result-head">
+      <p class="eyebrow">A starting point for your conversation</p>
+      <h2 id="result-title">Suggested estimate</h2>
+      <p class="estimate"><span data-result="estimate">{formatUSD(result.rounded.estimate)}</span><span class="currency-label">USD</span></p>
+      <p class="range-label">Indicative negotiation range</p>
+      <p class="range" data-result="range">{formatUSD(result.rounded.low)} – {formatUSD(result.rounded.high)}</p>
+      <p class="range-note">80–120% of your estimate</p>
+    </div>
+    <div class="result-body">
+      <p class="notice" data-invalid hidden>Complete the fields marked with an error to see your estimate.</p>
+      <div data-breakdown>
+        <h3>How it adds up</h3>
+        <dl class="breakdown">
+          <div><dt>Base fee <span>Views ÷ 1,000 × CPM</span></dt><dd data-result="baseFee">{formatUSD(result.rounded.baseFee)}</dd></div>
+          <div class="integration-row"><dt>After integration <span data-result="integrationLabel">Base fee × 1.00</span></dt><dd data-result="integratedFee">{formatUSD(result.rounded.integratedFee)}</dd></div>
+          <div><dt>Usage rights <span data-result="usageLabel">+0% of fee after integration</span></dt><dd data-result="usageFee">+{formatUSD(result.rounded.usageFee)}</dd></div>
+          <div><dt>Exclusivity <span data-result="exclusivityLabel">+0% of fee after integration</span></dt><dd data-result="exclusivityFee">+{formatUSD(result.rounded.exclusivityFee)}</dd></div>
+          <div><dt>Production cost</dt><dd data-result="production">+{formatUSD(result.rounded.production)}</dd></div>
+          <div class="breakdown-total"><dt>Suggested estimate</dt><dd data-result="total">{formatUSD(result.rounded.estimate)}</dd></div>
+        </dl>
+        <p class="rounding-note">Amounts are rounded to whole dollars for display. Rounded components may not add up exactly.</p>
+        <p class="notice" data-zero hidden>With zero views or CPM, only production cost contributes to this estimate.</p>
+      </div>
+      <p class="result-disclaimer">This is an estimate, not a guaranteed market rate or earnings. Actual rates vary; your assumptions, deal terms, and negotiation matter.</p>
+      <a class="text-link" href="#methodology">Understand the methodology <span aria-hidden="true">↓</span></a>
+    </div>
+  </section>
+  <p class="sr-only" role="status" aria-live="polite" aria-atomic="true" data-announcement></p>
+</div>
+
+<script>
+  import { calculateSponsorship, formatUSD, numericError, type NumericField, type SponsorshipInput } from '../lib/sponsorship';
+
+  const root = document.querySelector<HTMLElement>('[data-calculator]');
+  if (root) {
+    const form = root.querySelector<HTMLFormElement>('form')!;
+    const fieldset = form.querySelector('fieldset')!;
+    const input = (name: NumericField) => form.elements.namedItem(name) as HTMLInputElement;
+    const select = (name: string) => form.elements.namedItem(name) as HTMLSelectElement;
+    const invalid = root.querySelector<HTMLElement>('[data-invalid]')!;
+    const breakdown = root.querySelector<HTMLElement>('[data-breakdown]')!;
+    const zero = root.querySelector<HTMLElement>('[data-zero]')!;
+    const announcement = root.querySelector<HTMLElement>('[data-announcement]')!;
+    let announcementTimer: ReturnType<typeof setTimeout>;
+
+    function setResult(name: string, value: string) {
+      const target = root!.querySelector<HTMLElement>(`[data-result="${name}"]`)!;
+      target.textContent = value;
+    }
+
+    function update(announce = true) {
+      let hasError = false;
+      for (const name of ['views', 'cpm', 'production'] as const) {
+        const control = input(name);
+        const error = control.validity.badInput ? 'Enter a valid number.' : numericError(control.value, name);
+        const message = root!.querySelector<HTMLElement>(`#${name}-error`)!;
+        control.setAttribute('aria-invalid', String(Boolean(error)));
+        message.textContent = error ?? '';
+        message.hidden = !error;
+        hasError ||= Boolean(error);
+      }
+
+      let spokenResult = 'Estimate unavailable. Check the fields marked with an error.';
+      if (!hasError) {
+        try {
+          const result = calculateSponsorship({
+            views: input('views').valueAsNumber,
+            cpm: input('cpm').valueAsNumber,
+            production: input('production').valueAsNumber,
+            integration: select('integration').value as SponsorshipInput['integration'],
+            usage: select('usage').value as SponsorshipInput['usage'],
+            exclusivity: select('exclusivity').value as SponsorshipInput['exclusivity'],
+          });
+          setResult('estimate', formatUSD(result.rounded.estimate));
+          setResult('total', formatUSD(result.rounded.estimate));
+          setResult('range', `${formatUSD(result.rounded.low)} – ${formatUSD(result.rounded.high)}`);
+          for (const key of ['baseFee', 'integratedFee', 'usageFee', 'exclusivityFee', 'production'] as const) {
+            const prefix = ['usageFee', 'exclusivityFee', 'production'].includes(key) ? '+' : '';
+            setResult(key, `${prefix}${formatUSD(result.rounded[key])}`);
+          }
+          setResult('integrationLabel', `Base fee × ${result.integrationMultiplier.toFixed(2)}`);
+          setResult('usageLabel', `+${Math.round(result.usageUplift * 100)}% of fee after integration`);
+          setResult('exclusivityLabel', `+${Math.round(result.exclusivityUplift * 100)}% of fee after integration`);
+          zero.hidden = result.baseFee !== 0;
+          spokenResult = `Suggested estimate: ${formatUSD(result.rounded.estimate)} USD. Indicative range: ${formatUSD(result.rounded.low)} to ${formatUSD(result.rounded.high)}.`;
+        } catch {
+          hasError = true;
+        }
+      }
+      invalid.hidden = !hasError;
+      breakdown.hidden = hasError;
+      if (hasError) {
+        setResult('estimate', '—');
+        setResult('range', '—');
+      }
+      if (announce) {
+        clearTimeout(announcementTimer);
+        announcementTimer = setTimeout(() => { announcement.textContent = spokenResult; }, 400);
+      }
+    }
+
+    form.addEventListener('submit', (event) => event.preventDefault());
+    form.addEventListener('input', () => update());
+    form.addEventListener('change', () => update());
+    window.addEventListener('pageshow', () => {
+      // History navigation can restore form values after the initial script
+      // runs, without firing input/change. Wait for that restoration to finish.
+      setTimeout(() => update(false), 0);
+    });
+    fieldset.disabled = false;
+    update(false);
+  }
+</script>
