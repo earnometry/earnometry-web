@@ -25,6 +25,27 @@ const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
     {!noindex && <meta property="og:url" content={canonical} />}
     <meta name="theme-color" content="#163e32" />
     <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
+
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+
+      let analyticsConsent = null;
+      try {
+        analyticsConsent = localStorage.getItem('earnometry-analytics-consent');
+      } catch {}
+
+      gtag('consent', 'default', {
+        analytics_storage: analyticsConsent === 'granted' ? 'granted' : 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        wait_for_update: 500
+      });
+      gtag('js', new Date());
+      gtag('config', 'G-4X5MF3R8PS');
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4X5MF3R8PS"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -39,8 +60,76 @@ const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
     </header>
     <main id="main" class="shell" tabindex="-1"><slot /></main>
     <footer class="site-footer shell">
-      <div class="footer-top"><a class="footer-brand" href="/">Earnometry</a><span>Make sense of the numbers.</span></div>
+      <div class="footer-top">
+        <a class="footer-brand" href="/">Earnometry</a>
+        <span>Make sense of the numbers.</span>
+        <button type="button" class="cookie-settings" id="cookie-settings">Cookie settings</button>
+      </div>
       <p>Earnometry provides estimates for educational and informational purposes only. Results are not financial, legal, tax, or professional advice.</p>
     </footer>
+
+    <section class="analytics-consent" id="analytics-consent" hidden role="dialog" aria-labelledby="analytics-consent-title" aria-describedby="analytics-consent-copy">
+      <div class="analytics-consent-copy">
+        <strong id="analytics-consent-title">Optional analytics</strong>
+        <p id="analytics-consent-copy">We use Google Analytics to understand traffic and improve Earnometry. Analytics is optional and advertising storage stays disabled.</p>
+      </div>
+      <div class="analytics-consent-actions">
+        <button type="button" class="consent-button consent-button-secondary" data-consent="denied">Reject</button>
+        <button type="button" class="consent-button consent-button-primary" data-consent="granted">Accept analytics</button>
+      </div>
+    </section>
+
+    <script is:inline>
+      (() => {
+        const storageKey = 'earnometry-analytics-consent';
+        const banner = document.getElementById('analytics-consent');
+        const settings = document.getElementById('cookie-settings');
+
+        const readChoice = () => {
+          try {
+            return localStorage.getItem(storageKey);
+          } catch {
+            return null;
+          }
+        };
+
+        const showBanner = () => {
+          if (banner) banner.hidden = false;
+        };
+
+        const hideBanner = () => {
+          if (banner) banner.hidden = true;
+        };
+
+        const applyChoice = (choice) => {
+          if (typeof window.gtag === 'function') {
+            window.gtag('consent', 'update', {
+              analytics_storage: choice,
+              ad_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied'
+            });
+          }
+
+          try {
+            localStorage.setItem(storageKey, choice);
+          } catch {}
+
+          hideBanner();
+        };
+
+        banner?.querySelectorAll('[data-consent]').forEach((button) => {
+          button.addEventListener('click', () => {
+            applyChoice(button.dataset.consent === 'granted' ? 'granted' : 'denied');
+          });
+        });
+
+        settings?.addEventListener('click', () => {
+          showBanner();
+        });
+
+        if (!readChoice()) showBanner();
+      })();
+    </script>
   </body>
 </html>
