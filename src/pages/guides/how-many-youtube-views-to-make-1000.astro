@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import '../../styles/guide.css';
+---
+
+<BaseLayout
+  title="How Many YouTube Views to Make $1,000? | Earnometry"
+  description="How many YouTube views does it take to make $1,000? See the formula and view counts at $1, $3, $5, and $10 RPM, then calculate your own target."
+>
+  <article class="guide-article">
+    <header class="guide-hero">
+      <a class="back-link" href="/guides"><span aria-hidden="true">←</span> All guides</a>
+      <p class="eyebrow">YouTube earnings guide</p>
+      <h1>How Many YouTube Views Do You Need to Make $1,000?</h1>
+      <p class="lead">There is no single view count that guarantees $1,000. The number depends on your RPM: how much revenue you earn for every 1,000 views on the relevant measurement basis.</p>
+      <p class="guide-meta">Published October 18, 2026 · Hypothetical examples, not a payout guarantee</p>
+    </header>
+
+    <section class="guide-answer" aria-labelledby="quick-answer">
+      <p class="guide-kicker">Quick answer</p>
+      <h2 id="quick-answer">At a $5 RPM, about 200,000 views would equal $1,000.</h2>
+      <p>At a $10 RPM, the same $1,000 target would take about 100,000 views. At a $1 RPM, it would take 1,000,000 views.</p>
+      <div class="formula" aria-label="Views needed formula">
+        <span>Views needed</span>
+        <strong>= Revenue target ÷ RPM × 1,000</strong>
+      </div>
+      <a class="button" href="/tools/youtube-money-calculator">Calculate your own target <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <nav class="guide-toc" aria-label="On this page">
+      <strong>On this page</strong>
+      <a href="#views-table">Views needed at different RPMs</a>
+      <a href="#formula">The formula</a>
+      <a href="#rpm">What RPM means</a>
+      <a href="#why-it-varies">Why the number varies</a>
+      <a href="#shorts">Long-form vs Shorts</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <section class="guide-section" id="views-table" aria-labelledby="views-title">
+      <p class="eyebrow">The numbers</p>
+      <h2 id="views-title">Views needed to make $1,000 at different RPMs</h2>
+      <p>The table below is simple arithmetic. It does <strong>not</strong> claim that any RPM is normal or guaranteed. If your channel is already monetized, your own historical RPM is usually the most useful planning input.</p>
+
+      <div class="table-wrap">
+        <table class="guide-table">
+          <caption>Hypothetical views needed to reach $1,000 in revenue.</caption>
+          <thead>
+            <tr><th scope="col">RPM</th><th scope="col">Views needed for $1,000</th><th scope="col">Revenue from 100K views</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">$1</th><td>1,000,000</td><td>$100</td></tr>
+            <tr><th scope="row">$2</th><td>500,000</td><td>$200</td></tr>
+            <tr><th scope="row">$3</th><td>333,334</td><td>$300</td></tr>
+            <tr><th scope="row">$4</th><td>250,000</td><td>$400</td></tr>
+            <tr><th scope="row">$5</th><td>200,000</td><td>$500</td></tr>
+            <tr><th scope="row">$8</th><td>125,000</td><td>$800</td></tr>
+            <tr><th scope="row">$10</th><td>100,000</td><td>$1,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>For example, 200,000 views at a $5 RPM gives an estimated $1,000: 200,000 ÷ 1,000 × $5 = $1,000.</p>
+      <p>If your goal is specifically <strong>$1,000 per month</strong>, use monthly views and an RPM from a matching period. If you are modeling a different period, keep the views and RPM on that same basis.</p>
+    </section>
+
+    <section class="guide-section" id="formula" aria-labelledby="formula-title">
+      <p class="eyebrow">Work backward</p>
+      <h2 id="formula-title">The formula for a revenue target</h2>
+      <p>Revenue normally starts with the familiar calculation:</p>
+      <div class="formula formula-secondary">
+        <span>Estimated revenue</span>
+        <strong>= Views ÷ 1,000 × RPM</strong>
+      </div>
+      <p>To find the views needed for a target, rearrange it:</p>
+      <div class="formula">
+        <span>Views needed</span>
+        <strong>= Revenue target ÷ RPM × 1,000</strong>
+      </div>
+
+      <h3>Example: $1,000 at a $3 RPM</h3>
+      <ol class="worked-example">
+        <li>Start with the $1,000 target.</li>
+        <li>Divide by the $3 RPM: 1,000 ÷ 3 = 333.33 recurring.</li>
+        <li>Multiply by 1,000 views.</li>
+        <li>Round upward if you need a whole-view target: <strong>333,334 views</strong>.</li>
+      </ol>
+      <p>This is why a single answer such as “100,000 views” can be misleading. It is only correct for a particular RPM assumption.</p>
+    </section>
+
+    <section class="guide-section" id="rpm" aria-labelledby="rpm-title">
+      <p class="eyebrow">The important input</p>
+      <h2 id="rpm-title">What RPM actually tells you</h2>
+      <p>YouTube describes RPM as a creator-focused metric showing how much revenue you earn per 1,000 views after YouTube's revenue share. Depending on the metric, it can include revenue such as ads, YouTube Premium, channel memberships, Super Chat, and Super Stickers.</p>
+      <p>That makes RPM more useful than CPM for this calculation. CPM is advertiser-facing: it measures what advertisers pay per 1,000 ad impressions, not what you receive per 1,000 total views.</p>
+      <p><a href="https://support.google.com/youtube/answer/9314357?hl=en">YouTube's official RPM and CPM explanation</a> provides the platform definition and current measurement notes.</p>
+
+      <div class="guide-note">
+        <strong>Do not subtract YouTube's share again.</strong>
+        <p>If you are using the RPM shown in YouTube Analytics, the metric is already after revenue sharing. Use it directly in the formula.</p>
+      </div>
+    </section>
+
+    <section class="guide-section" id="why-it-varies" aria-labelledby="why-title">
+      <p class="eyebrow">Why there is no magic number</p>
+      <h2 id="why-title">The same number of views can produce very different revenue</h2>
+      <p>Your RPM can move over time, so the number of views needed to reach $1,000 can move too. Factors can include:</p>
+      <ul class="guide-list-bullets">
+        <li><strong>Audience location:</strong> advertiser demand differs across markets.</li>
+        <li><strong>Topic and niche:</strong> advertisers value some audiences and purchase intents differently.</li>
+        <li><strong>Seasonality:</strong> advertising demand can change across the year.</li>
+        <li><strong>Format and monetization mix:</strong> long-form, Shorts, Premium revenue, memberships, and other eligible revenue sources do not behave identically.</li>
+        <li><strong>Your own channel mix:</strong> a channel can change as its audience, content, and monetized views change.</li>
+      </ul>
+      <p>Instead of asking for one universal view count, a better planning question is: <strong>“How many views would I need at my RPM?”</strong></p>
+    </section>
+
+    <section class="guide-section" id="shorts" aria-labelledby="shorts-title">
+      <p class="eyebrow">Keep formats separate</p>
+      <h2 id="shorts-title">Long-form views and Shorts views should not share one RPM assumption</h2>
+      <p>YouTube currently calculates Shorts RPM per 1,000 <strong>engaged views</strong>, while video RPM uses video views. That means a Shorts view count and a long-form RPM are not interchangeable inputs.</p>
+      <p>If you publish both formats, model them separately with matching view counts and RPMs. The <a href="/tools/youtube-money-calculator">Earnometry YouTube Money Calculator</a> has separate inputs for long-form and Shorts so you can keep those assumptions apart.</p>
+    </section>
+
+    <aside class="guide-cta" aria-labelledby="calculator-cta">
+      <p class="guide-kicker">Use your own assumptions</p>
+      <h2 id="calculator-cta">How many views would <em>your</em> $1,000 target take?</h2>
+      <p>Enter your long-form or Shorts RPM and a $1,000 monthly income target. Earnometry calculates the required view count and keeps the assumptions visible.</p>
+      <a class="button" href="/tools/youtube-money-calculator">Open the YouTube Money Calculator <span aria-hidden="true">↗</span></a>
+      <p class="quiet-note">Free to use. No signup needed.</p>
+    </aside>
+
+    <section class="guide-section" id="faq" aria-labelledby="faq-title">
+      <p class="eyebrow">Frequently asked questions</p>
+      <h2 id="faq-title">YouTube views and the $1,000 target</h2>
+
+      <div class="faq-list">
+        <details>
+          <summary>Can 100,000 YouTube views make $1,000?</summary>
+          <p>Yes, if the relevant RPM is about $10. At a $5 RPM, 100,000 views would instead estimate to about $500. The result depends on the RPM you use.</p>
+        </details>
+        <details>
+          <summary>How many YouTube views do you need to make $1,000 at a $5 RPM?</summary>
+          <p>About 200,000 views. The calculation is $1,000 ÷ $5 × 1,000 = 200,000 views.</p>
+        </details>
+        <details>
+          <summary>How many views do you need at a $3 RPM?</summary>
+          <p>About 333,334 views to reach at least $1,000 when using whole views. The exact unrounded calculation is 333,333.33 recurring.</p>
+        </details>
+        <details>
+          <summary>Does YouTube pay a fixed amount per view?</summary>
+          <p>No. A fixed per-view amount would ignore changes in RPM, monetization, audience, format, and other factors. RPM is a more useful planning metric for creator revenue.</p>
+        </details>
+        <details>
+          <summary>Is RPM the same as CPM?</summary>
+          <p>No. RPM is creator revenue per 1,000 views after revenue sharing, while CPM is an advertiser-facing measure based on ad impressions before revenue sharing.</p>
+        </details>
+      </div>
+    </section>
+
+    <footer class="guide-footer">
+      <p><strong>Method note:</strong> All dollar examples on this page are hypothetical arithmetic examples, not market benchmarks or guaranteed YouTube earnings. Use a matching RPM from your own analytics when possible.</p>
+    </footer>
+  </article>
+</BaseLayout>

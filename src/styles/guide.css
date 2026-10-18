@@ -1,0 +1,86 @@
+.guide-index,
+.guide-article { padding: 58px 0 82px; }
+.guide-index { max-width: 850px; }
+.guide-index h1,
+.guide-hero h1 { font-size: clamp(2.7rem, 6.3vw, 5rem); margin-bottom: 24px; }
+.back-link { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; margin-bottom: 28px; font-size: 0.88rem; font-weight: 600; text-decoration: none; }
+.back-link:hover { text-decoration: underline; }
+.guide-list { margin-top: 42px; }
+.guide-list-card { border: 1px solid #ccd5c5; border-radius: 10px; background: #eef1e6; padding: 30px; }
+.guide-list-card h2 { margin-bottom: 14px; }
+.guide-list-card h2 a { text-decoration: none; }
+.guide-list-card h2 a:hover { text-decoration: underline; }
+.guide-kicker { color: var(--accent); font-size: 0.76rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+
+.guide-article { max-width: 860px; }
+.guide-hero { max-width: 800px; padding-bottom: 42px; border-bottom: 1px solid var(--line); }
+.guide-hero .lead { max-width: 760px; margin-bottom: 16px; }
+.guide-meta { color: var(--muted); font-size: 0.82rem; margin: 0; }
+
+.guide-answer { margin: 42px 0; padding: 30px; border: 1px solid #b9c8b3; border-radius: 10px; background: #eef1e6; }
+.guide-answer h2 { font-size: clamp(1.8rem, 3.5vw, 2.55rem); margin-bottom: 16px; }
+.guide-answer .button,
+.guide-cta .button { margin-top: 10px; }
+
+.formula { display: grid; gap: 5px; margin: 24px 0; padding: 20px 22px; border-left: 4px solid var(--accent); background: #fffdf7; }
+.formula span { color: var(--muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.formula strong { color: var(--green); font-size: clamp(1.15rem, 2.5vw, 1.55rem); }
+.formula-secondary { border-left-color: #9aa88e; }
+
+.guide-toc { display: grid; gap: 7px; margin: 0 0 52px; padding: 22px 0 22px 22px; border-left: 1px solid var(--line); }
+.guide-toc strong { margin-bottom: 3px; color: var(--green); }
+.guide-toc a { width: fit-content; font-size: 0.92rem; }
+
+.guide-section { padding: 0 0 54px; }
+.guide-section + .guide-section { padding-top: 8px; }
+.guide-section h2 { font-size: clamp(1.85rem, 3.4vw, 2.6rem); margin-bottom: 18px; }
+.guide-section h3 { font-size: 1.25rem; margin-top: 30px; margin-bottom: 12px; }
+.guide-section p,
+.guide-section li { max-width: 760px; }
+.guide-section p { margin-bottom: 18px; }
+
+.table-wrap { overflow-x: auto; margin: 26px 0 20px; }
+.guide-table { width: 100%; border-collapse: collapse; min-width: 610px; background: #fffdf7; }
+.guide-table caption { text-align: left; color: var(--muted); font-size: 0.82rem; margin-bottom: 8px; }
+.guide-table th,
+.guide-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+.guide-table thead th { color: var(--green); background: #eef1e6; font-size: 0.84rem; }
+.guide-table tbody th { color: var(--green); }
+.guide-table tbody tr:last-child th,
+.guide-table tbody tr:last-child td { border-bottom: 0; }
+
+.worked-example,
+.guide-list-bullets { padding-left: 22px; }
+.worked-example li,
+.guide-list-bullets li { margin-bottom: 10px; }
+
+.guide-note { margin: 28px 0; padding: 20px 22px; border: 1px solid #d8c690; border-radius: 8px; background: #fbf5df; }
+.guide-note strong { display: block; color: var(--green); margin-bottom: 6px; }
+.guide-note p { margin: 0; }
+
+.guide-cta { margin: 8px 0 58px; padding: 32px; border-radius: 10px; background: var(--green); color: #f8f6ef; }
+.guide-cta h2,
+.guide-cta .guide-kicker { color: #f8f6ef; }
+.guide-cta p { max-width: 700px; }
+.guide-cta .button { background: #f8f6ef; color: var(--green); }
+.guide-cta .button:hover { background: #eef1e6; }
+.guide-cta .quiet-note { color: #d9e1da; }
+
+.faq-list { border-top: 1px solid var(--line); }
+.faq-list details { border-bottom: 1px solid var(--line); padding: 0; }
+.faq-list summary { cursor: pointer; color: var(--green); font-weight: 650; padding: 18px 0; }
+.faq-list details p { padding: 0 0 18px; margin: 0; }
+
+.guide-footer { margin-top: 8px; padding-top: 26px; border-top: 1px solid var(--line); color: var(--muted); }
+.guide-footer p { font-size: 0.84rem; max-width: 760px; }
+
+@media (max-width: 760px) {
+  .guide-index,
+  .guide-article { padding: 42px 0 58px; }
+  .guide-index h1,
+  .guide-hero h1 { font-size: clamp(2.5rem, 12vw, 3.8rem); }
+  .guide-answer,
+  .guide-cta,
+  .guide-list-card { padding: 24px; }
+  .guide-toc { margin-bottom: 42px; }
+}
