@@ -1,12 +1,29 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import '../../styles/guide.css';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'How Many YouTube Views Do You Need to Make $1,000?',
+  description: 'How many YouTube views does it take to make $1,000? See the formula and view counts at different RPM assumptions, then calculate your own target.',
+  datePublished: '2026-10-18',
+  dateModified: '2026-10-18',
+  mainEntityOfPage: 'https://earnometry.com/guides/how-many-youtube-views-to-make-1000',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Earnometry',
+    url: 'https://earnometry.com'
+  }
+};
 ---
 
 <BaseLayout
   title="How Many YouTube Views to Make $1,000? | Earnometry"
   description="How many YouTube views does it take to make $1,000? See the formula and view counts at $1, $3, $5, and $10 RPM, then calculate your own target."
+  ogType="article"
 >
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)}></script>
   <article class="guide-article">
     <header class="guide-hero">
       <a class="back-link" href="/guides"><span aria-hidden="true">←</span> All guides</a>

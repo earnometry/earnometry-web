@@ -1,8 +1,8 @@
 ---
 import '../styles/global.css';
 
-interface Props { title: string; description: string; noindex?: boolean }
-const { title, description, noindex = false } = Astro.props;
+interface Props { title: string; description: string; noindex?: boolean; ogType?: 'website' | 'article' }
+const { title, description, noindex = false, ogType = 'website' } = Astro.props;
 // File-format builds expose .html in Astro.url; Pages serves the clean URL.
 const canonicalPath = Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
 const canonical = new URL(canonicalPath, Astro.site);
@@ -17,7 +17,7 @@ const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Earnometry" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={title} />
