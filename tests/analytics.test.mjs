@@ -137,3 +137,14 @@ test('each new calculator page has fresh deduplication state', () => {
   assert.equal(events.filter(e => e[1] === 'calculator_started').length, 2);
   assert.equal(events.filter(e => e[1] === 'calculator_result_generated').length, 2);
 });
+
+test('navigation uses supported callback controls with a 200 ms bound and unchanged business context', () => {
+  const { analytics, events } = setup();
+  const complete = () => {};
+  assert.equal(analytics.send('internal_cta_clicked', { cta_id: 'home_youtube_hero', rpm: 3 }, complete), true);
+  assert.deepEqual(events[0][2], {
+    event_version: '1', page_path: '/tools/youtube-money-calculator',
+    placement: 'home_hero', destination_path: '/tools/youtube-money-calculator', cta_id: 'home_youtube_hero',
+    event_callback: complete, event_timeout: 200,
+  });
+});

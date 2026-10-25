@@ -1,9 +1,9 @@
 # Earnometry Product Specification v1
 
-- **Version:** 1.1 (ANA-02 local implementation addendum)
+- **Version:** 1.2 (ANA-02 deployment and link-delivery follow-up)
 - **Audit date:** 25 October 2026 (Europe/Madrid)
 - **Initiative:** SPEC-01
-- **Status:** Sections 3-11 preserve the SPEC-01 baseline at the pinned remote commit. ANA-02 is now implemented and verified locally as described in section 12; deployment and real GA4 delivery remain pending.
+- **Status:** Sections 3-11 preserve the SPEC-01 baseline at the pinned remote commit. ANA-02 has an initial successful production release and the link-delivery follow-up described in sections 12-13. Authenticated GA4 receipt verification remains pending.
 - **Strategic authority:** Approved Earnometry Strategy v1.1, 24 October 2026.
 - **Production hold:** No new articles, tools, videos, Shorts, social posts, or demand-selected assets are authorized by this specification task.
 
@@ -254,8 +254,16 @@ The user authorized synchronizing main and implementing ANA-02. Local main was f
 
 The homepage hero, first featured tool and first navigation link now prioritize the YouTube calculator; Sponsorship and the existing guide remain available. Home audience copy follows the YouTube-creator focus. The shared analytics helper implements all five events, the fixed-context allowlist, explicit-consent and loaded-tag gates, actual-change detection and in-memory page-level deduplication. Google-tag load does not itself replay earlier interactions. The existing Google tag/configuration and denied ad-consent settings are retained.
 
-Local verification passed: **52 unit tests** (42 existing calculation tests plus 10 measurement tests), **Astro check with zero errors/warnings/hints**, production build, and **12 browser scenario groups** using the built output, Chrome 155 and a simulated Google tag. Browser checks included all 12 CTA activations, consent transitions, stale stored grants after failed consent writes, blocked/missing/throwing tag, unavailable storage, independent targets and zero results, passive history/synthetic updates, no JavaScript, five public routes at 320/390/768/1280 px, canonicals, Article metadata, sitemap and custom 404. Local QA sent no events to Google.
+Local verification passed: **53 unit tests** (42 existing calculation tests plus 11 measurement tests), **Astro check with zero errors/warnings/hints**, production build, and **13 browser scenario groups** using the built output, Chrome 155 and a simulated Google tag. Browser checks included all 12 CTA activations, consent transitions, stale stored grants after failed consent writes, blocked/missing/throwing tag, unavailable storage, independent targets and zero results, passive history/synthetic updates, no JavaScript, five public routes at 320/390/768/1280 px, canonicals, Article metadata, sitemap and custom 404. The added follow-up scenario covers bounded callback navigation, duplicate callbacks and native middle-click behavior. Local QA sent no events to Google; separate identified real-tag production QA is described below.
 
 The local operating workspace holds `EARNOMETRY_STRATEGY.md` (an unchanged copy from the migration archive) and a current `EARNOMETRY_STATE.json` revision recording operational progress and the production hold. Those operating files and the migration ZIP are excluded from the public application release. The archive and workbook snapshots remain untouched; their performance evidence is dated 24 October.
 
-See [ANA-02_IMPLEMENTATION.md](ANA-02_IMPLEMENTATION.md) for the complete CTA registry, parameter rules, verification method and release checklist. Source-code emission/local browser evidence is not proof of receipt in GA4. **ANA-02 remains pending deployment and authenticated property-side delivery verification; do not treat the full measurement initiative as complete or start new asset production.** No live GA4 key-event/custom-dimension settings have been changed by this work.
+See [ANA-02_IMPLEMENTATION.md](ANA-02_IMPLEMENTATION.md) for the complete CTA registry, parameter rules, verification method and release evidence. Source-code emission/local browser evidence is not proof of receipt in GA4. **ANA-02 remains pending authenticated property-side delivery verification; do not treat the full measurement initiative as complete or start new asset production.** No live GA4 key-event/custom-dimension settings have been changed by this work.
+
+## 13. Production transport verification and bounded navigation
+
+The initial production release is merge `e6cfb6d9b48ddbb6f4aa828e892315accfc82c12`, deployed successfully by GitHub Pages run `40173435332`. Public homepage hierarchy and calculator arithmetic matched the implementation. Identified real-tag QA confirmed HTTP 204 collection responses for four event types; a focused probe showed that `internal_cta_clicked` could be lost during immediate navigation even though the helper emitted it.
+
+The follow-up changes only consented, measured same-tab links: they navigate when Google's supported `event_callback` runs, with an independent local 200 ms fallback and `event_timeout=200`. Denied/missing analytics and modified/new-tab/download navigation retain immediate native behavior. Callback retries cannot duplicate navigation. These transport controls are separate from the business-context allowlist and do not add raw input data. This evidence-based bounded exception replaces the initial immediate-navigation implementation; it does not permit indefinite blocking or introduce a second tag/configuration.
+
+Recheck the five normal-navigation event types after publishing the follow-up, and use [GA4_VERIFICATION.md](GA4_VERIFICATION.md) for the owner's property-side check. Transport success must not be reported as authenticated GA4 verification.
