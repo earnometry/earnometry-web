@@ -56,10 +56,10 @@ export function createAnalytics(environment: AnalyticsEnvironment) {
     }
   }
 
-  function send(event: ProductEvent, context: EventContext): boolean {
+  function send(event: ProductEvent, context: EventContext, onProcessed?: () => void): boolean {
     if (!enabled()) return false;
     try {
-      const parameters: Record<string, string> = { event_version: '1', page_path: canonicalPagePath(environment.path()) };
+      const parameters: Record<string, string | number | (() => void)> = { event_version: '1', page_path: canonicalPagePath(environment.path()) };
       if (event === 'internal_cta_clicked' || event === 'related_tool_clicked') {
         if (!context.cta_id || !Object.hasOwn(trackedLinks, context.cta_id)) return false;
         const link = trackedLinks[context.cta_id];
@@ -70,6 +70,10 @@ export function createAnalytics(environment: AnalyticsEnvironment) {
         if (context.calculator_id !== 'youtube_money' && context.calculator_id !== 'sponsorship_rate') return false;
         if (event === 'income_target_used' && context.calculator_id !== 'youtube_money') return false;
         parameters.calculator_id = context.calculator_id;
+      }
+      if (onProcessed) {
+        parameters.event_callback = onProcessed;
+        parameters.event_timeout = 200;
       }
       environment.tag()!('event', event, parameters);
       return true;
@@ -127,7 +131,27 @@ export function bindTrackedLinks() {
     const definition = trackedLinks[id as LinkId];
     const url = new URL(link.href);
     if (url.origin !== window.location.origin || canonicalPagePath(url.pathname) !== definition.destination_path) return;
-    browserAnalytics.send('calculator_id' in definition ? 'related_tool_clicked' : 'internal_cta_clicked', { cta_id: id as LinkId });
+    const name = 'calculator_id' in definition ? 'related_tool_clicked' : 'internal_cta_clicked';
+    const context = { cta_id: id as LinkId };
+    const sameTab = event.type === 'click' && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey
+      && (!link.target || link.target === '_self') && !link.hasAttribute('download');
+    if (!sameTab || !browserAnalytics.enabled()) {
+      browserAnalytics.send(name, context);
+      return;
+    }
+    // gtag processes commands asynchronously; immediate unload can lose a click.
+    // A local timeout guarantees navigation even if the tag never calls back.
+    event.preventDefault();
+    let navigated = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const navigate = () => {
+      if (navigated) return;
+      navigated = true;
+      clearTimeout(timer);
+      window.location.assign(url.href);
+    };
+    timer = setTimeout(navigate, 200);
+    if (!browserAnalytics.send(name, context, navigate)) navigate();
   }
   document.addEventListener('click', activate);
   document.addEventListener('auxclick', activate);
