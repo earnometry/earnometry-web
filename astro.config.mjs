@@ -6,7 +6,7 @@ export default defineConfig({
   integrations: [sitemap()],
   output: 'static',
   trailingSlash: 'never',
-  // Cloudflare Pages serves .html files at extensionless, slash-free URLs.
+  // GitHub Pages serves file-format output at these clean, extensionless URLs.
   build: { format: 'file' },
   devToolbar: { enabled: false },
 });

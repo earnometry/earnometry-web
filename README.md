@@ -1,6 +1,8 @@
 # Earnometry
 
-A small, static website with a home page, Creator Sponsorship Rate Calculator, and YouTube Money Calculator. The original MVP requirements live in `PRODUCT_SPEC.md` and `CODEX_TASK_01.md`; the approved second-tool requirements are in `PRODUCT_SPEC_02.md`.
+A static website for YouTube creators with a YouTube Money Calculator, a secondary Creator Sponsorship Rate Calculator, and a practical guide. The current implementation contract is [PRODUCT_SPEC_v1.md](PRODUCT_SPEC_v1.md), aligned with approved Earnometry Strategy v1.1. `PRODUCT_SPEC.md`, `CODEX_TASK_01.md` and `PRODUCT_SPEC_02.md` are historical references.
+
+ANA-02 implements consent-aware product-use events and YouTube-first homepage/navigation priority. See [ANA-02_IMPLEMENTATION.md](ANA-02_IMPLEMENTATION.md) for event semantics, CTA identifiers, verification evidence and the pending production/GA4 checks. New content production remains on hold.
 
 ## Local setup
 
@@ -11,7 +13,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:4321. The tools are at http://localhost:4321/tools/sponsorship-rate-calculator and http://localhost:4321/tools/youtube-money-calculator. Stop the server with Ctrl+C. No environment variables, accounts, API keys, or external services are required.
+Open http://localhost:4321. The primary tool is at http://localhost:4321/tools/youtube-money-calculator; Sponsorship is at http://localhost:4321/tools/sponsorship-rate-calculator and the guide directory is at http://localhost:4321/guides. Stop the server with Ctrl+C. No environment variables, accounts or API keys are required for the calculators. Optional GA4 uses the existing public measurement ID; calculations remain usable if analytics is blocked.
 
 When Astro starts a background server (for example, inside an agent environment), use `npm run dev -- stop` or `npm run preview -- stop` to stop it. The corresponding `-- status` command shows its URL and running state.
 
@@ -36,18 +38,19 @@ If your Windows policy blocks `astro.win32-x64-msvc.node`, Astro can use its off
 npm install --no-save --package-lock=false --force @astrojs/compiler-binding-wasm32-wasi@0.4.1
 ```
 
-The package declares a `wasm32` CPU target, so this one local install needs `--force` on an x64 machine. This does not change the project dependencies or lockfile. Astro loads it automatically when the native compiler is unavailable. Node emits an experimental WASI runtime notice with this fallback; this is separate from Astro code diagnostics. A fresh `npm ci` removes the local fallback, so repeat the command if needed. The normal native build and Cloudflare's Linux build do not need this workaround.
+The package declares a `wasm32` CPU target, so this one local install needs `--force` on an x64 machine. This does not change the project dependencies or lockfile. Astro loads it automatically when the native compiler is unavailable. Node emits an experimental WASI runtime notice with this fallback; this is separate from Astro code diagnostics. A fresh `npm ci` removes the local fallback, so repeat the command if needed. The normal native build and GitHub Actions' Linux build do not need this workaround.
 
 ## Architecture and deployment target
 
-- Astro renders the home page, both calculators, and a custom 404 as static HTML; TypeScript adds browser-only calculations.
+- Astro renders the homepage, both calculators, guide directory, existing guide and custom 404 as static HTML; TypeScript adds browser-only calculations and optional product-use events.
 - Plain CSS, system fonts, and a local SVG mark keep assets small. No client UI framework.
-- `npm run build` writes the static site to `dist/`, suitable for Cloudflare Pages. Future Pages setup uses that build command and output directory with Node 24. No server adapter is needed. This task does not deploy or configure Cloudflare.
-- Each calculator builds as an `.html` file so Cloudflare Pages' extensionless URL matches its links and canonical URL, without a trailing slash.
-- No authentication, database, payments, analytics, cookies, input persistence, ads, or affiliate links.
+- `npm run build` writes `dist/`. Production deploys to GitHub Pages through `.github/workflows/deploy.yml` on pushes to `main` or manual dispatch, using the Astro build/upload action and `actions/deploy-pages`. It does not use branch/Jekyll publishing or Cloudflare Pages.
+- Pages build as `.html` files with clean extensionless links and canonical URLs, without a trailing slash.
+- No authentication, database, payments, calculator-input persistence, ads or affiliate links.
+- GA4 measurement ID `G-4X5MF3R8PS` and the existing consent banner remain in the shared layout. Only explicit granted analytics consent plus a loaded tag permits custom product events. Ad storage/user data/personalization stay denied. Consent choice is saved in localStorage when available; calculator inputs and results are not sent in custom events.
 - Canonical and Open Graph URLs use the intended `https://earnometry.com` domain configured in `astro.config.mjs`.
 - The official `@astrojs/sitemap` integration generates `dist/sitemap-index.xml` and `dist/sitemap-0.xml`. `public/robots.txt` allows crawlers and points to the sitemap index; Astro copies it to `dist/robots.txt`.
-- The top-level `dist/404.html` lets Cloudflare Pages serve missing URLs as 404 responses instead of falling back to the homepage. The error page is marked `noindex` and excluded from the sitemap.
+- GitHub Pages serves the top-level `dist/404.html` for missing URLs. The error page is marked `noindex` and excluded from the five-page sitemap.
 
 ## Main files
 
@@ -60,6 +63,9 @@ The package declares a `wasm32` CPU target, so this one local install needs `--f
 - `src/lib/sponsorship.ts`: shared options, validation, defaults, calculation, and USD formatting.
 - `src/layouts/BaseLayout.astro`: navigation, metadata, footer, and accessible page shell.
 - `src/styles/`: shared responsive CSS.
+- `src/lib/analytics.ts`: consent/readiness checks, fixed event context, per-page use deduplication and tracked-link registry.
+- `tests/analytics.test.mjs`: consent, failure, payload, lifecycle, target and deduplication coverage.
+- `src/pages/guides/`: guide directory and the existing $1,000 view-target guide, including Article metadata and calculator CTAs.
 - `tests/sponsorship.test.mjs`: math and validation tests.
 - `src/pages/tools/youtube-money-calculator.astro`: YouTube calculator page, methodology, worked examples, and contextual link.
 - `src/components/YouTubeCalculator.astro`: blank initial form, independent result states, inline errors, and accessible updates.

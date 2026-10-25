@@ -63,6 +63,7 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
 </div>
 
 <script>
+  import { createCalculatorTracker } from '../lib/analytics';
   import { calculateSponsorship, formatUSD, numericError, type NumericField, type SponsorshipInput } from '../lib/sponsorship';
 
   const root = document.querySelector<HTMLElement>('[data-calculator]');
@@ -75,6 +76,10 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
     const breakdown = root.querySelector<HTMLElement>('[data-breakdown]')!;
     const zero = root.querySelector<HTMLElement>('[data-zero]')!;
     const announcement = root.querySelector<HTMLElement>('[data-announcement]')!;
+    const tracker = createCalculatorTracker('sponsorship_rate');
+    const fields = ['views', 'cpm', 'production', 'integration', 'usage', 'exclusivity'];
+    const fingerprint = (control: HTMLInputElement | HTMLSelectElement) => `${control.validity.badInput}:${control.value}`;
+    const lastInputs = new Map(fields.map((name) => [name, fingerprint(form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement)]));
     let announcementTimer: ReturnType<typeof setTimeout>;
 
     function setResult(name: string, value: string) {
@@ -131,15 +136,29 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
         clearTimeout(announcementTimer);
         announcementTimer = setTimeout(() => { announcement.textContent = spokenResult; }, 400);
       }
+      return !hasError;
     }
 
+    function onEdit(event: Event) {
+      const control = event.target;
+      if (!(control instanceof HTMLInputElement || control instanceof HTMLSelectElement) || !fields.includes(control.name)) return;
+      const resultReady = update();
+      const value = fingerprint(control);
+      if (event.isTrusted && value !== lastInputs.get(control.name)) {
+        lastInputs.set(control.name, value);
+        tracker.edit({ kind: 'revenue', resultReady });
+      }
+    }
     form.addEventListener('submit', (event) => event.preventDefault());
-    form.addEventListener('input', () => update());
-    form.addEventListener('change', () => update());
+    form.addEventListener('input', onEdit);
+    form.addEventListener('change', onEdit);
     window.addEventListener('pageshow', () => {
       // History navigation can restore form values after the initial script
       // runs, without firing input/change. Wait for that restoration to finish.
-      setTimeout(() => update(false), 0);
+      setTimeout(() => {
+        update(false);
+        for (const name of fields) lastInputs.set(name, fingerprint(form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement));
+      }, 0);
     });
     fieldset.disabled = false;
     update(false);

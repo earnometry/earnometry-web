@@ -28,6 +28,7 @@ a, button, input, select, summary { -webkit-tap-highlight-color: transparent; }
 .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.055em; }
 .brand-dot { margin-left: -9px; color: var(--accent); }
 .brand-mark { flex-shrink: 0; }
+.site-header nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 4px 20px; }
 nav a { display: inline-flex; align-items: center; min-height: 44px; font-size: 0.9rem; font-weight: 600; text-decoration: none; }
 nav a:hover, nav a[aria-current='page'] { text-decoration: underline; }
 .eyebrow { color: var(--accent); font-size: 0.73rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 20px; }
