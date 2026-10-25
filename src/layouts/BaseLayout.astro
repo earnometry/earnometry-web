@@ -6,7 +6,6 @@ const { title, description, noindex = false, ogType = 'website' } = Astro.props;
 // File-format builds expose .html in Astro.url; Pages serves the clean URL.
 const canonicalPath = Astro.url.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
 const canonical = new URL(canonicalPath, Astro.site);
-const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
 ---
 <!doctype html>
 <html lang="en">
@@ -28,12 +27,14 @@ const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
 
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
+      window.earnometryAnalyticsReady = false;
       function gtag(){dataLayer.push(arguments);}
 
       let analyticsConsent = null;
       try {
         analyticsConsent = localStorage.getItem('earnometry-analytics-consent');
       } catch {}
+      window.earnometryAnalyticsConsent = analyticsConsent;
 
       gtag('consent', 'default', {
         analytics_storage: analyticsConsent === 'granted' ? 'granted' : 'denied',
@@ -45,7 +46,7 @@ const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
       gtag('js', new Date());
       gtag('config', 'G-4X5MF3R8PS');
     </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4X5MF3R8PS"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4X5MF3R8PS" onload="window.earnometryAnalyticsReady = true"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -55,7 +56,8 @@ const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
         Earnometry<span class="brand-dot" aria-hidden="true">.</span>
       </a>
       <nav aria-label="Main navigation">
-        <a href="/tools/sponsorship-rate-calculator" aria-current={isCalculator ? 'page' : undefined}>Sponsorship calculator</a>
+        <a href="/tools/youtube-money-calculator" aria-current={canonicalPath === '/tools/youtube-money-calculator' ? 'page' : undefined}>YouTube calculator</a>
+        <a href="/tools/sponsorship-rate-calculator" aria-current={canonicalPath === '/tools/sponsorship-rate-calculator' ? 'page' : undefined}>Sponsorship calculator</a>
       </nav>
     </header>
     <main id="main" class="shell" tabindex="-1"><slot /></main>
@@ -102,18 +104,24 @@ const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
         };
 
         const applyChoice = (choice) => {
-          if (typeof window.gtag === 'function') {
-            window.gtag('consent', 'update', {
-              analytics_storage: choice,
-              ad_storage: 'denied',
-              ad_user_data: 'denied',
-              ad_personalization: 'denied'
-            });
-          }
+          // Honor the current choice even if storage still holds an older grant.
+          window.earnometryAnalyticsConsent = choice;
+          try {
+            if (typeof window.gtag === 'function') {
+              window.gtag('consent', 'update', {
+                analytics_storage: choice,
+                ad_storage: 'denied',
+                ad_user_data: 'denied',
+                ad_personalization: 'denied'
+              });
+            }
+          } catch {}
 
           try {
             localStorage.setItem(storageKey, choice);
-          } catch {}
+          } catch {
+            window.earnometryAnalyticsConsent = null;
+          }
 
           hideBanner();
         };
@@ -130,6 +138,10 @@ const isCalculator = canonicalPath === '/tools/sponsorship-rate-calculator';
 
         if (!readChoice()) showBanner();
       })();
+    </script>
+    <script>
+      import { bindTrackedLinks } from '../lib/analytics';
+      bindTrackedLinks();
     </script>
   </body>
 </html>
